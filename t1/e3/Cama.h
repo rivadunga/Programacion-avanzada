@@ -27,6 +27,7 @@ void Cama_setStatus(Cama * cama, int status){
 void Cama_construc(Cama * cama, int numero)
 {
     cama->numero = numero;
+	cama->status = 1;
 }
 
 void Cama_destroy(Cama * cama){

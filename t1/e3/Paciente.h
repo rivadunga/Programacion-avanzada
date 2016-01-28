@@ -34,5 +34,5 @@ void Paciente_construc(Paciente * paciente, char*nombre, char* apellido, int eda
 }
 
 void Paciente_destroy(Paciente * paciente){
-
+    free(paciente->cama);
 }
