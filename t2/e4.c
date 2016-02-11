@@ -5,28 +5,33 @@
 
 int N, P;
 
-void crearNodo(int level, int pos)
+void crearNodos(int level)
 {
-    pid_t pid;
-
-    pid = fork();
-
-    if (pos < P)
+    if (level < N)
     {
+        pid_t pid;
+        pid_t pid2;
+        int   i, j, status;
+        pid = fork();
+
         if (pid == -1)
         {
-            fprintf(stderr, "can't fork, error %d\n", errno);
-            exit(EXIT_FAILURE);
+            printf("error\n");
         }
-
-        if (pid == 0)
+        else if (pid == 0)
         {
-            fprintf(stderr, "Level is %d, i am %ld , my parent is %ld\n", level, (long)getpid(), (long)getppid());
+            printf("%i Nodo: [%i] Padre[%i]\n", (level + 1), getpid(), getppid());
+            for (i = 0; i < P; i++)
+            {
+                crearNodos(level + 1);
+            }
             exit(0);
         }
         else
         {
-            crearNodo(level, (pos + 1));
+            while ((pid2 = wait(&status)) > 0)
+            {
+            }
         }
     }
 }
@@ -49,12 +54,7 @@ int main(int argc, char * argv[])
         default:
             abort();
         }
-
-    int j = 0;
-
-    for (; j < N; j++)
-    {
-        crearNodo(j + 1, 0);
-    }
+    crearNodos(0);
     return 0;
 }
+

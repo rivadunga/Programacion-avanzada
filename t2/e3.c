@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         {
             printf("Error");
         }
-        if (pid2 == 0)
+        else if (pid2 == 0)
         {
             srand((int)time(NULL) + getpid());
             int tiempo = rand() % 20;
