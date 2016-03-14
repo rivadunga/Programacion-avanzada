@@ -8,10 +8,9 @@
 #include <string.h>
 #include <errno.h>
 #include <math.h>
-#define PATH    "Data"
+#define PATH    "datos"
 
 int flag = 0;
-
 
 void createDir()
 {
@@ -20,15 +19,11 @@ void createDir()
 
     if (dir)
     {
-        printf("Borrando directorio\n");
         eraseDir();
         closedir(dir);
     }
     else if (ENOENT == errno)
-    {
-        printf("Creando directorio\n");
         mkdir(PATH, 0777);
-    }
 }
 
 
@@ -47,10 +42,10 @@ void printDir()
             if (d->d_type == DT_REG)
             {
                 path = (char*)malloc((strlen(path) + strlen(d->d_name) + 1) * sizeof(char));
-                strcpy(path, "Data/");
+                strcpy(path, "datos/");
                 strcat(path, d->d_name);
                 stat(path, &s);
-                printf("Data/%s Size: %lld Mbyte's\n", d->d_name, (long long)(((s.st_size) / 1024) / 1024));
+                printf("Nombre\n", d->d_name);
             }
         }
         closedir(dir);
@@ -70,9 +65,8 @@ void eraseDir()
     {
         if (d->d_type == DT_REG)
         {
-            printf("Borrando %s\n", d->d_name);
-            sprintf(buf, "%s/%s", PATH, d->d_name);
             unlink(buf);
+            sprintf(buf, "%s/%s", PATH, d->d_name);
             remove(buf);
         }
     }
@@ -91,25 +85,36 @@ int main(int argc, char *argv[])
     FILE *file  = NULL;
     char *buffer[20];
 
+    sigset_t bloqueados;
+
+    sigfillset(&bloqueados);
+    sigdelset(&bloqueados, SIGALRM);
+    sigprocmask(SIG_SETMASK, &bloqueados, NULL);
+
     signal(SIGALRM, SIG_DFL);
     alarm(2);
     signal(SIGALRM, handler_alarm);
     createDir();
 
+    sigset_t pendientes;
     for (i = 0; i < numDir; i++)
     {
         printf("Creando archivos\n");
         int signal;
         flag = 1;
         file = fopen(buffer, "w+");
-        sprintf(buffer, "./Data/a%d", i);
+        sprintf(buffer, "./datos/a%d", i);
         alarm(3);
-        while (flag)
+        int numX = 0;
+        while (flag && numX < 100){
             fputc('x', file);
+            numX++;
+        }
+        fprintf(file, "Bloqueado: %s\n",sigpending(&pendientes));
         fclose(file);
     }
     printf("INFO\n\n");
-    printDir();
-
+    //printDir();
+    printf("\n");
     return 0;
 }
