@@ -1,3 +1,5 @@
+//Nota: si se compila con gcc no olvidar -pthread y -lm
+
 #include <stdio.h>
 #include <pthread.h>
 #include <time.h>
@@ -92,6 +94,11 @@ int main(int argc, const char * argv[])
     for (int i = 0; i < U; ++i)
         pthread_join(*(tUsuario + i), NULL);
 
+    free(cola);
+    free(salas);
+    free(taquillas);
+    free(usuarios);
+
     return 0;
 }
 
@@ -148,7 +155,7 @@ void * taquillaCtrl(void * arg)
         {
             if (salas[i].cineId == cineId    //Sala perteneciente a mismo cine
                 && salas[i].ocupados < CA    //Con suficientes lugares
-                && salas[i].status == false) //Que no este iniciada
+                && salas[i].status == FALSE) //Que no este iniciada
                 posSala = i;
         }
 
